@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from datetime import datetime
 
 from model import Reserva
@@ -23,6 +23,24 @@ class ReservaSchema(BaseModel):
             "duracao_reserva": self.duracao_reserva,
             "fim_reserva": self.fim_reserva
         }
+
+    @validator('data_reserva')
+    def validate_data_reserva(cls, value):
+        try:
+            # Verificar se a data está no formato correto "dia/mês/ano"
+            datetime.strptime(value, "%d/%m/%Y")
+        except ValueError:
+            raise ValueError("A data da reserva deve estar no formato 'dia/mês/ano'")
+        return value
+
+    @validator('horario_reserva')
+    def validate_horario_reserva(cls, value):
+        try:
+            # Verificar se o horário está no formato correto "hora:minuto"
+            datetime.strptime(value, "%H:%M")
+        except ValueError:
+            raise ValueError("O horário da reserva deve estar no formato 'hora:minuto'")
+        return value
 
 
 class ListagemReservaSchema(BaseModel):

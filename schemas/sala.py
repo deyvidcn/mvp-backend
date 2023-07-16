@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional, List
 
 from model.sala import Sala
@@ -9,6 +9,18 @@ class SalaSchema(BaseModel):
     nome: str = "sala1"
     capacidade: int = 12
     descricao: str = "Descrição da sala"
+
+    @validator('nome')
+    def validate_nome(cls, value):
+        if not value.strip():
+            raise ValueError("O nome da sala não pode estar vazio")
+        return value
+
+    @validator('capacidade')
+    def validate_capacidade(cls, value):
+        if not isinstance(value, int) or value <= 0:
+            raise ValueError("A capacidade da sala deve ser um número inteiro positivo")
+        return value
 
 
 class SalaBuscaSchema(BaseModel):
